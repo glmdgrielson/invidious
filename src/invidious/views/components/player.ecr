@@ -210,6 +210,25 @@ if (bpb) {
 }
 <% end %>
 
+
+var videoContainer = document.getElementById("player");
+
+let xhr = new XMLHttpRequest();
+xhr.responseType = "text";
+xhr.timeout = 20000;
+xhr.open("GET", "https://archive.omar.yt/api/v1/annotations/<%= video.id %>", true);
+xhr.send();
+xhr.onreadystatechange = function () {
+  if (xhr.readyState === 4) {
+    if (xhr.status === 200) {
+      player.ready(() => {
+        videojs.registerPlugin("youtubeAnnotationsPlugin", youtubeAnnotationsPlugin);
+        player.youtubeAnnotationsPlugin({annotationXml: xhr.response, videoContainer})
+      });
+    }
+  }
+};
+
 // Since videojs-share can sometimes be blocked, we try to load it last
 player.share(shareOptions);
 </script>
