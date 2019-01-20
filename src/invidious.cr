@@ -797,6 +797,7 @@ post "/login" do |env|
 
       if challenge_results[0][-1]?.try &.[5] == "INCORRECT_ANSWER_ENTERED"
         error_message = translate(locale, "Incorrect password")
+        error_message = challenge_results
         next templated "error"
       end
 
