@@ -337,7 +337,7 @@ class AnnotationRenderer {
 			let videoHeight = player.videoHeight();
 			let margin = ((playerWidth - videoWidth) / 2) / playerWidth;
 
-			el.style.left = `${annotation.x + (margin * 100)}`;
+			el.style.left = `${annotation.x + (margin * 100)}%`;
 			el.style.top = `${annotation.y}%`;
 
 			el.style.width = `${annotation.width + (margin * 100)}%`;
