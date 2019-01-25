@@ -336,11 +336,11 @@ class AnnotationRenderer {
 			let videoWidth = player.videoWidth();
 			let videoHeight = player.videoHeight();
 
-			el.style.left = `${annotation.x * (playerWidth / videoWidth)}%`;
-			el.style.top = `${annotation.y * (playerHeight / videoHeight)}%`;
+			el.style.left = `${annotation.x}%`;
+			el.style.top = `${annotation.y}%`;
 
-			el.style.width = `${annotation.width * (playerWidth / videoWidth)}%`;
-			el.style.height = `${annotation.height * (playerHeight / videoHeight)}%`;
+			el.style.width = `${annotation.width}%`;
+			el.style.height = `${annotation.height}%`;
 
 			// close button
 			const closeButton = this.createCloseElement();
