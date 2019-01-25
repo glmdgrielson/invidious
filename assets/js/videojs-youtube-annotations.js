@@ -338,10 +338,10 @@ class AnnotationRenderer {
 			let xOffset = (playerHeight - ((playerWidth - videoWidth) * videoHeight)) / 2;
 			let xMargin = Math.max(xOffset, 0);
 
-			el.style.left = `${annotation.x + (xMargin / playerWidth * 100)}%`;
+			el.style.left = `${annotation.x * playerWidth + xMargin}px`;
 			el.style.top = `${annotation.y}%`;
 
-			el.style.width = `${annotation.width + (xMargin / playerWidth * 100)}%`;
+			el.style.width = `${annotation.width * playerWidth - xMargin}%`;
 			el.style.height = `${annotation.height}%`;
 
 			// close button
