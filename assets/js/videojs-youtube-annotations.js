@@ -331,11 +331,16 @@ class AnnotationRenderer {
 			annotation.__element = el;
 			el.__anotation = annotation;
 
-			el.style.left = `${annotation.x}%`;
-			el.style.top = `${annotation.y}%`;
+			let playerWidth = video.dimension("width");
+			let playerHeight = video.dimension("height");
+			let videoWidth = video.videoWidth();
+			let videoHeight = video.videoHeight();
 
-			el.style.width = `${annotation.width}%`;
-			el.style.height = `${annotation.height}%`;
+			el.style.left = `${annotation.x * (videoWidth / playerWidth)}%`;
+			el.style.top = `${annotation.y * (videoHeight / playerHeight)}%`;
+
+			el.style.width = `${annotation.width * (videoWidth / playerWidth)}%`;
+			el.style.height = `${annotation.height * (videoHeight / playerHeight)}%`;
 
 			// close button
 			const closeButton = this.createCloseElement();
@@ -346,7 +351,6 @@ class AnnotationRenderer {
 			el.append(closeButton);
 
 			// appearance
-			const containerHeight = this.container.getBoundingClientRect().height;
 			let annotationAppearance = this.constructor.defaultAppearanceAttributes;
 			if (!isNaN(annotation.textSize)) {
 				// text size calculations
