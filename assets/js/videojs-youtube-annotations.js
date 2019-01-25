@@ -331,8 +331,8 @@ class AnnotationRenderer {
 			annotation.__element = el;
 			el.__anotation = annotation;
 
-			let playerWidth = player.width();
-			let playerHeight = player.height();
+			let playerWidth = player.currentWidth();
+			let playerHeight = player.currentHeight();
 			let videoWidth = player.videoWidth();
 			let videoHeight = player.videoHeight();
 			let xOffset = (playerHeight - ((playerWidth - videoWidth) * videoHeight)) / 2;
