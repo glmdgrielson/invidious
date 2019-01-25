@@ -331,10 +331,10 @@ class AnnotationRenderer {
 			annotation.__element = el;
 			el.__anotation = annotation;
 
-			let playerWidth = video.dimension("width");
-			let playerHeight = video.dimension("height");
-			let videoWidth = video.videoWidth();
-			let videoHeight = video.videoHeight();
+			let playerWidth = player.dimension("width");
+			let playerHeight = player.dimension("height");
+			let videoWidth = player.videoWidth();
+			let videoHeight = player.videoHeight();
 
 			el.style.left = `${annotation.x * (videoWidth / playerWidth)}%`;
 			el.style.top = `${annotation.y * (videoHeight / playerHeight)}%`;
