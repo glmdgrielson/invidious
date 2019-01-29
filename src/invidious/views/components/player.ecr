@@ -228,6 +228,40 @@ xhr.onreadystatechange = function () {
     }
   }
 };
+window.addEventListener("__ar_annotation_click", e => {
+	if (!e.detail.url) return;
+
+	const url = new URL(e.detail.url);
+
+	// youtube.com/watch?v=videoId
+	if (url.href.startsWith("https://www.youtube.com/watch?")) {
+		if (videoId) window.location.href = `https://invidio.us/watch?v=${<%= video.id %>}`;
+	}
+	// youtube.com/playlist?list=playlistId
+	else if (url.href.startsWith("https://www.youtube.com/playlist?")) {
+		const playlistId = url.searchParams.get("list");
+		if (playlistId) window.location.href = `https://invidio.us/playlist?list=${playlistId}`;
+	}
+	// youtube.com/channel/channelId
+	else if (url.href.startsWith("https://www.youtube.com/channel/")) {
+		const channelId = url.pathname;
+		if (channelName) window.location.href = `https://invidio.us/channel/${channelName}`;
+	}
+	// youtube.com/user/channelName
+	else if (url.href.startsWith("https://www.youtube.com/user/")) {
+		const channelName = url.pathname;
+		if (channelName) window.location.href = `https://invidio.us/user/${channelName}`;
+	}
+	// youtube.com/profile?user=channelName
+	else if (url.href.startsWith("https://www.youtube.com/profile?")) {
+		const channelName = url.searchParams.get("user");
+		if (channelName) window.location.href = `https://invidio.us/user/${channelName}`;
+	}
+	// if it doesn't match any of the above formats
+	else {
+		window.location.href = url.href;
+	}
+});
 
 // Since videojs-share can sometimes be blocked, we try to load it last
 player.share(shareOptions);
