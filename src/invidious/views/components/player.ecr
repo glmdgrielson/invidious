@@ -224,6 +224,7 @@ xhr.onreadystatechange = function () {
       player.ready(() => {
         videojs.registerPlugin("youtubeAnnotationsPlugin", youtubeAnnotationsPlugin);
         player.youtubeAnnotationsPlugin({annotationXml: xhr.response, videoContainer, updateInterval: 250})
+        window.dispatchEvent(new Event('resize'));
       });
     }
   }
