@@ -235,7 +235,8 @@ window.addEventListener("__ar_annotation_click", e => {
 
 	// youtube.com/watch?v=videoId
 	if (url.href.startsWith("https://www.youtube.com/watch?")) {
-		if (videoId) window.location.href = `https://invidio.us/watch?v=${<%= video.id %>}`;
+    const videoId = url.searchParams.get("v");
+		if (videoId) window.location.href = `https://invidio.us/watch?v=${videoId}`;
 	}
 	// youtube.com/playlist?list=playlistId
 	else if (url.href.startsWith("https://www.youtube.com/playlist?")) {
