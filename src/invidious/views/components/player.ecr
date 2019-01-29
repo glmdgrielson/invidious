@@ -223,7 +223,7 @@ xhr.onreadystatechange = function () {
     if (xhr.status === 200) {
       player.ready(() => {
         videojs.registerPlugin("youtubeAnnotationsPlugin", youtubeAnnotationsPlugin);
-        player.youtubeAnnotationsPlugin({annotationXml: xhr.response, videoContainer})
+        player.youtubeAnnotationsPlugin({annotationXml: xhr.response, videoContainer, updateInterval: 250})
       });
     }
   }
