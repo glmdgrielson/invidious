@@ -8,6 +8,9 @@ class AnnotationParser {
 			width: "w",
 			height: "h",
 
+			sx: "sx",
+			sy: "sy",
+
 			timeStart: "ts",
 			timeEnd: "te",
 			text: "t",
@@ -139,6 +142,9 @@ class AnnotationParser {
 		if (action) annotation = Object.assign(action, annotation);
 		if (appearance) annotation = Object.assign(appearance, annotation);
 
+		if (backgroundShape.hasOwnProperty("sx")) annotation.sx = backgroundShape.sx;
+		if (backgroundShape.hasOwnProperty("sy")) annotation.sy = backgroundShape.sy;
+
 		return annotation;
 	}
 	getBackgroundShapeFromBase(base) {
@@ -149,14 +155,22 @@ class AnnotationParser {
 		const regions = movingRegion.getElementsByTagName(`${regionType}Region`);
 		const timeRange = this.extractRegionTime(regions);
 
-		return {
+		const shape = {
 			type: regionType,
 			x: parseFloat(regions[0].getAttribute("x"), 10),
 			y: parseFloat(regions[0].getAttribute("y"), 10),
 			width: parseFloat(regions[0].getAttribute("w"), 10),
 			height: parseFloat(regions[0].getAttribute("h"), 10),
 			timeRange
-		};
+		}
+
+		const sx = regions[0].getAttribute("sx");
+		const sy = regions[0].getAttribute("sy");
+
+		if (sx) shape.sx = parseFloat(sx, 10);
+		if (sy) shape.sy = parseFloat(sy, 10);
+		
+		return shape;
 	}
 	getAttributesFromBase(base) {
 		const attributes = {};
@@ -327,7 +341,7 @@ class AnnotationRenderer {
 			el.classList.add("__cxt-ar-annotation__");
 
 			annotation.__element = el;
-			el.__anotation = annotation;
+			el.__annotation = annotation;
 
 			// close button
 			const closeButton = this.createCloseElement();
@@ -553,7 +567,7 @@ class AnnotationRenderer {
 			annotationElement = annotationElement.closest(".__cxt-ar-annotation__");
 			if (!annotationElement) return null;
 		} 
-		let annotationData = annotationElement.__anotation;
+		let annotationData = annotationElement.__annotation;
 
 		if (!annotationElement || !annotationData) return;
 
@@ -567,8 +581,13 @@ class AnnotationRenderer {
 			window.dispatchEvent(new CustomEvent("__ar_seek_to", {detail: {seconds}}));
 		}
 		else if (annotationData.actionType === "url") {
-			// window.location.href = annotationData.actionUrl;
-			window.dispatchEvent(new CustomEvent("__ar_annotation_click", {detail: {url: annotationData.actionUrl}}));
+			const data = {url: annotationData.actionUrl};
+
+			const timeHash = this.extractTimeHash(new URL(data.url));
+			if (timeHash && timeHash.hasOwnProperty("seconds")) {
+				data.seconds = timeHash.seconds;
+			}
+			window.dispatchEvent(new CustomEvent("__ar_annotation_click", {detail: data}));
 		}
 	}
 
@@ -582,6 +601,32 @@ class AnnotationRenderer {
 		let hex = dec.toString(16);
 		hex = "000000".substr(0, 6 - hex.length) + hex; 
 		return hex;
+	}
+	extractTimeHash(url) {
+		if (!url) throw new Error("A URL must be provided");
+		const hash = url.hash;
+
+		if (hash && hash.startsWith("#t=")) {
+			const timeString = url.hash.split("#t=")[1];
+			const seconds = this.timeStringToSeconds(timeString);
+			return {seconds};
+		}
+		else {
+			return false;
+		}
+	}
+	timeStringToSeconds(time) {
+		let seconds = 0;
+
+		const h = time.split("h");
+	  	const m = (h[1] || time).split("m");
+	  	const s = (m[1] || time).split("s");
+		  
+	  	if (h[0] && h.length === 2) seconds += parseInt(h[0], 10) * 60 * 60;
+	  	if (m[0] && m.length === 2) seconds += parseInt(m[0], 10) * 60;
+	  	if (s[0] && s.length === 2) seconds += parseInt(s[0], 10);
+
+		return seconds;
 	}
 }
 function youtubeAnnotationsPlugin(options) {
@@ -612,6 +657,7 @@ function youtubeAnnotationsPlugin(options) {
 		}
 	};
 
+	raiseControls();
 	const renderer = new AnnotationRenderer(annotations, videoContainer, playerOptions, options.updateInterval);
 	setupEventListeners(player, renderer);
 	renderer.start();
@@ -638,10 +684,12 @@ function setupEventListeners(player, renderer) {
 	});
 }
 
-const styles = document.createElement("style");
-styles.textContent = `
-.vjs-control-bar {
-	z-index: 21;
+function raiseControls() {
+	const styles = document.createElement("style");
+	styles.textContent = `
+	.vjs-control-bar {
+		z-index: 21;
+	}
+	`;
+	document.body.append(styles);
 }
-`;
-document.body.append(styles);
