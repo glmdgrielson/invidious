@@ -235,28 +235,27 @@ window.addEventListener("__ar_annotation_click", e => {
 
 	// youtube.com/watch?v=videoId
 	if (url.href.startsWith("https://www.youtube.com/watch?")) {
-    const videoId = url.searchParams.get("v");
-		if (videoId) window.location.href = `https://invidio.us/watch?v=${videoId}`;
+		window.location.href = `https://dev.invidio.us/watch?v=${<%= video.id %>}`;
 	}
 	// youtube.com/playlist?list=playlistId
 	else if (url.href.startsWith("https://www.youtube.com/playlist?")) {
 		const playlistId = url.searchParams.get("list");
-		if (playlistId) window.location.href = `https://invidio.us/playlist?list=${playlistId}`;
+		if (playlistId) window.location.href = `https://dev.invidio.us/playlist?list=${playlistId}`;
 	}
 	// youtube.com/channel/channelId
 	else if (url.href.startsWith("https://www.youtube.com/channel/")) {
 		const channelId = url.pathname;
-		if (channelName) window.location.href = `https://invidio.us/channel/${channelName}`;
+		if (channelName) window.location.href = `https://dev.invidio.us/channel/${channelName}`;
 	}
 	// youtube.com/user/channelName
 	else if (url.href.startsWith("https://www.youtube.com/user/")) {
 		const channelName = url.pathname;
-		if (channelName) window.location.href = `https://invidio.us/user/${channelName}`;
+		if (channelName) window.location.href = `https://dev.invidio.us/user/${channelName}`;
 	}
 	// youtube.com/profile?user=channelName
 	else if (url.href.startsWith("https://www.youtube.com/profile?")) {
 		const channelName = url.searchParams.get("user");
-		if (channelName) window.location.href = `https://invidio.us/user/${channelName}`;
+		if (channelName) window.location.href = `https://dev.invidio.us/user/${channelName}`;
 	}
 	// if it doesn't match any of the above formats
 	else {
