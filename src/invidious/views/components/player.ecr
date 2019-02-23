@@ -210,24 +210,37 @@ if (bpb) {
 }
 <% end %>
 
+function load_annotations(xml, container) {
+  player.youtubeAnnotationsPlugin({annotationXml: xml, videoContainer: container});
+  window.dispatchEvent(new Event('resize'));
+}
 
-var videoContainer = document.getElementById("player");
-
+var video_container = document.getElementById("player");
 let xhr = new XMLHttpRequest();
 xhr.responseType = "text";
 xhr.timeout = 20000;
 xhr.open("GET", "https://archive.omar.yt/api/v1/annotations/<%= video.id %>", true);
 xhr.send();
+
 xhr.onreadystatechange = function () {
   if (xhr.readyState === 4) {
     if (xhr.status === 200) {
-      player.ready(() => {
-        videojs.registerPlugin("youtubeAnnotationsPlugin", youtubeAnnotationsPlugin);
-        player.youtubeAnnotationsPlugin({annotationXml: xhr.response, videoContainer, updateInterval: 250})
-      });
+      videojs.registerPlugin("youtubeAnnotationsPlugin", youtubeAnnotationsPlugin);
+
+      if (player.paused()) {
+        player.on('play', function() {
+          load_annotations(xhr.response, video_container);
+        });
+      } else {
+        player.on('loadedmetadata', function() {
+          load_annotations(xhr.response, video_container);
+        });
+        load_annotations(xhr.response, video_container);
+      }
     }
   }
 };
+
 window.addEventListener("__ar_annotation_click", e => {
 	if (!e.detail.url) return;
 
