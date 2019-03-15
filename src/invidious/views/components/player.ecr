@@ -241,43 +241,22 @@ xhr.onreadystatechange = function () {
 };
 
 window.addEventListener("__ar_annotation_click", e => {
-	if (!e.detail.url) return;
+    const { url, target } = e.detail;
+    
+    var path = new URL(e.detail.url);
 
-	const url = new URL(e.detail.url);
-
-	// youtube.com/watch?v=videoId
-	if (url.href.startsWith("https://www.youtube.com/watch?")) {
-    const videoId = url.searchParams.get("v");
-    let time = "";
-    if (e.detail.seconds) {
-      time = `&t=${e.detail.seconds}`;
+    if (path.href.startsWith("https://www.youtube.com/watch?") && (e.detail.seconds)) {
+        path += "&t=" + e.detail.seconds;
     }
-		window.location.href = `/watch?v=${videoId}${time}`;
-	}
-	// youtube.com/playlist?list=playlistId
-	else if (url.href.startsWith("https://www.youtube.com/playlist?")) {
-		const playlistId = url.searchParams.get("list");
-		if (playlistId) window.location.href = `/playlist?list=${playlistId}`;
-	}
-	// youtube.com/channel/channelId
-	else if (url.href.startsWith("https://www.youtube.com/channel/")) {
-		const channelId = url.pathname;
-		if (channelName) window.location.href = `/channel/${channelName}`;
-	}
-	// youtube.com/user/channelName
-	else if (url.href.startsWith("https://www.youtube.com/user/")) {
-		const channelName = url.pathname;
-		if (channelName) window.location.href = `/user/${channelName}`;
-	}
-	// youtube.com/profile?user=channelName
-	else if (url.href.startsWith("https://www.youtube.com/profile?")) {
-		const channelName = url.searchParams.get("user");
-		if (channelName) window.location.href = `/user/${channelName}`;
-	}
-	// if it doesn't match any of the above formats
-	else {
-		window.location.href = url.href;
-	}
+
+    path  = path.pathname + path.search;
+
+    if (target === "current") {
+        window.location.href = path;
+    }
+    else if (target === "new") {
+        window.open(path, "_blank");
+    }
 });
 
 // Since videojs-share can sometimes be blocked, we try to load it last
