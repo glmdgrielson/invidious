@@ -241,21 +241,20 @@ xhr.onreadystatechange = function () {
 };
 
 window.addEventListener("__ar_annotation_click", e => {
-    const { url, target } = e.detail;
+    const { url, target, seconds } = e.detail;
     
-    var path = new URL(e.detail.url);
+    var path = new URL(url);
+    var finalUrl = path.pathname + path.search
 
-    if (path.href.startsWith("https://www.youtube.com/watch?") && (e.detail.seconds)) {
-        path += "&t=" + e.detail.seconds;
+    if (finalUrl.startsWith("/watch") && seconds) {
+        finalUrl += "&t=" + seconds;
     }
-
-    path  = path.pathname + path.search;
 
     if (target === "current") {
-        window.location.href = path;
+        window.location.href = finalUrl;
     }
     else if (target === "new") {
-        window.open(path, "_blank");
+        window.open(finalUrl, "_blank");
     }
 });
 
